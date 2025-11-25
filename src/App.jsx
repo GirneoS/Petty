@@ -494,7 +494,7 @@ function PetsPage({ owner, dispatch }) {
     gender: '',
     age: '',
     name: '',
-    height: '',
+    breed: '',
   })
   const [isPetModalOpen, setIsPetModalOpen] = useState(false)
 
@@ -507,7 +507,6 @@ function PetsPage({ owner, dispatch }) {
         pet: {
           ...petForm,
           age: Number(petForm.age) || 0,
-          height: Number(petForm.height) || 0,
         },
       }),
     )
@@ -516,7 +515,7 @@ function PetsPage({ owner, dispatch }) {
       gender: '',
       age: '',
       name: '',
-      height: '',
+      breed: '',
     })
     setIsPetModalOpen(false)
   }
@@ -546,7 +545,7 @@ function PetsPage({ owner, dispatch }) {
             <p className="muted">{pet.family}</p>
             <ul className="details">
               <li>Пол: {pet.gender || '—'}</li>
-              <li>Рост: {pet.height ? `${pet.height} см` : '—'}</li>
+              <li>Порода: {pet.breed || '—'}</li>
             </ul>
           </div>
         ))}
@@ -592,26 +591,23 @@ function PetsPage({ owner, dispatch }) {
                   setPetForm((prev) => ({ ...prev, gender: e.target.value }))
                 }
               />
-              <div className="inline">
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Возраст"
-                  value={petForm.age}
-                  onChange={(e) =>
-                    setPetForm((prev) => ({ ...prev, age: e.target.value }))
-                  }
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Рост, см"
-                  value={petForm.height}
-                  onChange={(e) =>
-                    setPetForm((prev) => ({ ...prev, height: e.target.value }))
-                  }
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="Порода"
+                value={petForm.breed}
+                onChange={(e) =>
+                  setPetForm((prev) => ({ ...prev, breed: e.target.value }))
+                }
+              />
+              <input
+                type="number"
+                min="0"
+                placeholder="Возраст"
+                value={petForm.age}
+                onChange={(e) =>
+                  setPetForm((prev) => ({ ...prev, age: e.target.value }))
+                }
+              />
               <button type="submit" className="primary-button">
                 Сохранить
               </button>
@@ -826,6 +822,8 @@ function OwnerOrdersPage({ owner, orders, sitters, dispatch }) {
 }
 
 function AvailableOrdersPage({ sitter, orders, owners, dispatch }) {
+  const [showInfoModal, setShowInfoModal] = useState(false)
+
   const availableOrders = useMemo(
     () =>
       orders.filter(
@@ -834,6 +832,11 @@ function AvailableOrdersPage({ sitter, orders, owners, dispatch }) {
       ),
     [orders, sitter.id],
   )
+
+  const handleApply = (orderId) => {
+    dispatch(applyToOrder({ orderId, sitterId: sitter.id }))
+    setShowInfoModal(true)
+  }
 
   return (
     <div className="panel beige">
@@ -869,9 +872,7 @@ function AvailableOrdersPage({ sitter, orders, owners, dispatch }) {
                 <button
                   type="button"
                   className="primary-button full"
-                  onClick={() =>
-                    dispatch(applyToOrder({ orderId: order.id, sitterId: sitter.id }))
-                  }
+                  onClick={() => handleApply(order.id)}
                 >
                   Откликнуться
                 </button>
@@ -887,6 +888,29 @@ function AvailableOrdersPage({ sitter, orders, owners, dispatch }) {
           )
         })}
       </div>
+
+      {showInfoModal && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true">
+          <div className="modal beige info-modal">
+            <div className="modal-head">
+              <h4>Отклик отправлен</h4>
+              <button 
+                className="close-button" 
+                onClick={() => setShowInfoModal(false)}
+                aria-label="Закрыть"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="info-modal-content">
+              <p>
+                Вы откликнулись на заказ. Скоро этот заказ добавится у вас во вкладку "Взятые заказы". 
+                После этого будет доступен чат с клиентом.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
