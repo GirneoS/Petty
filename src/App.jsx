@@ -190,6 +190,10 @@ function App() {
                   }
                 />
                 <Route
+                  path="/sitter/chat-mockup/:orderId"
+                  element={<SimpleChatMockup />}
+                />
+                <Route
                   path="/sitter/orders/:orderId/chat"
                   element={
                     <ChatPage
@@ -224,7 +228,6 @@ function AuthPanel({ dispatch, authError }) {
     city: '',
     age: '',
     about: '',
-    rating: '4.8',
   })
 
   const handleSubmit = (event) => {
@@ -267,7 +270,7 @@ function AuthPanel({ dispatch, authError }) {
           phone: form.phone,
           city: form.city || 'Город не указан',
           age: Number(form.age) || 20,
-          rating: Number(form.rating) || 4.5,
+          rating: 4.5,
           about: form.about,
         }),
       )
@@ -387,19 +390,6 @@ function AuthPanel({ dispatch, authError }) {
                       value={form.age}
                       onChange={(e) =>
                         setForm((prev) => ({ ...prev, age: e.target.value }))
-                      }
-                    />
-                  </label>
-                  <label>
-                    Рейтинг
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="5"
-                      value={form.rating}
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, rating: e.target.value }))
                       }
                     />
                   </label>
@@ -821,8 +811,100 @@ function OwnerOrdersPage({ owner, orders, sitters, dispatch }) {
   )
 }
 
+function SimpleChatMockup() {
+  const navigate = useNavigate()
+  const { orderId } = useParams()
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      sender: 'Владелец',
+      text: 'Здравствуйте! Спасибо, что откликнулись на мой заказ.',
+      time: '14:23',
+      isOwner: true,
+    },
+    {
+      id: 2,
+      sender: 'Вы',
+      text: 'Добрый день! С удовольствием помогу с вашим питомцем.',
+      time: '14:25',
+      isOwner: false,
+    },
+    {
+      id: 3,
+      sender: 'Владелец',
+      text: 'Отлично! У меня есть несколько вопросов по уходу.',
+      time: '14:26',
+      isOwner: true,
+    },
+  ])
+  const [newMessage, setNewMessage] = useState('')
+
+  const handleSendMessage = (e) => {
+    e.preventDefault()
+    if (newMessage.trim()) {
+      setMessages([
+        ...messages,
+        {
+          id: messages.length + 1,
+          sender: 'Вы',
+          text: newMessage,
+          time: new Date().toLocaleTimeString('ru-RU', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+          isOwner: false,
+        },
+      ])
+      setNewMessage('')
+    }
+  }
+
+  return (
+    <div className="panel beige">
+      <PageHeader
+        title="Чат с владельцем"
+        subtitle="Обсудите детали заказа"
+        action={
+          <button className="ghost-button" onClick={() => navigate('/sitter/active')}>
+            Назад к заказам
+          </button>
+        }
+      />
+      <div className="chat-mockup">
+        <div className="chat-mockup-messages">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`chat-mockup-message ${msg.isOwner ? 'owner-message' : 'my-message'}`}
+            >
+              <div className="message-header">
+                <span className="message-sender">{msg.sender}</span>
+                <span className="message-time">{msg.time}</span>
+              </div>
+              <div className="message-text">{msg.text}</div>
+            </div>
+          ))}
+        </div>
+        <form className="chat-mockup-input" onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            placeholder="Напишите сообщение..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+          <button type="submit" className="primary-button">
+            Отправить
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 function AvailableOrdersPage({ sitter, orders, owners, dispatch }) {
+  const navigate = useNavigate()
   const [showInfoModal, setShowInfoModal] = useState(false)
+  const [appliedOrderId, setAppliedOrderId] = useState(null)
 
   const availableOrders = useMemo(
     () =>
@@ -835,7 +917,11 @@ function AvailableOrdersPage({ sitter, orders, owners, dispatch }) {
 
   const handleApply = (orderId) => {
     dispatch(applyToOrder({ orderId, sitterId: sitter.id }))
+    setAppliedOrderId(orderId)
     setShowInfoModal(true)
+    setTimeout(() => {
+      navigate(`/sitter/chat-mockup/${orderId}`)
+    }, 100)
   }
 
   return (
