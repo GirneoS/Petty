@@ -22,6 +22,27 @@ import {
 } from './store.js'
 import './App.css'
 
+function LandingPage({ onStart }) {
+  return (
+    <div className="landing-shell">
+      <div className="landing-pattern" aria-hidden></div>
+      <div className="landing-content">
+        <div className="landing-header">
+          <div className="brand-mark landing-logo">Petty</div>
+        </div>
+        <div className="landing-main">
+          <h1 className="landing-title">
+            Мы Petty! Компания, которая поможет проследить за вашими питомцами.
+          </h1>
+          <button className="landing-button" onClick={onStart}>
+            Тыкни сюда и начнем!
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -29,6 +50,7 @@ function App() {
   const { auth, owners, sitters, orders, authError } = useSelector(
     (state) => state.app,
   )
+  const [showLanding, setShowLanding] = useState(true)
 
   const currentUser =
     auth.role === 'owner'
@@ -42,6 +64,10 @@ function App() {
       navigate(defaultPath, { replace: true })
     }
   }, [currentUser, defaultPath, location.pathname, navigate])
+
+  if (!currentUser && showLanding) {
+    return <LandingPage onStart={() => setShowLanding(false)} />
+  }
 
   if (!currentUser) {
     return (
@@ -318,6 +344,7 @@ function AuthPanel({ dispatch, authError }) {
               type="password"
               required
               placeholder="******"
+              maxLength={30}
               value={form.password}
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, password: e.target.value }))
@@ -331,6 +358,7 @@ function AuthPanel({ dispatch, authError }) {
                 <input
                   type="text"
                   placeholder="+7 999 000-00-00"
+                  maxLength={16}
                   value={form.phone}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, phone: e.target.value }))

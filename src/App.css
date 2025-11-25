@@ -543,6 +543,123 @@ label.wide {
   margin-bottom: 10px;
 }
 
+.landing-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f7f1e8 0%, #fdf8f0 50%, #f9f3eb 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.landing-content {
+  width: min(800px, 100%);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.landing-header {
+  margin-bottom: 60px;
+}
+
+.landing-logo {
+  font-size: 48px;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.landing-main {
+  background: rgba(255, 250, 243, 0.95);
+  border: 2px solid #e6d6c4;
+  border-radius: 30px;
+  padding: 60px 40px;
+  box-shadow: 0 30px 60px rgba(78, 63, 48, 0.15);
+}
+
+.landing-title {
+  font-size: 32px;
+  line-height: 1.5;
+  color: #2f2b28;
+  margin: 0 0 50px 0;
+  font-weight: 700;
+  animation: fadeIn 1s ease-out 0.3s both;
+}
+
+.landing-button {
+  background: linear-gradient(135deg, #f1d9ba, #f7cda1);
+  color: #3f2e28;
+  border: none;
+  border-radius: 20px;
+  padding: 24px 48px;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(134, 92, 58, 0.25);
+  transition: all 0.3s ease;
+  animation: fadeIn 1s ease-out 0.6s both;
+}
+
+.landing-button:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 45px rgba(134, 92, 58, 0.35);
+}
+
+.landing-button:active {
+  transform: translateY(-2px) scale(1);
+}
+
+.landing-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f1d9ba' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+  z-index: 1;
+  animation: patternMove 30s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes patternMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 60px 60px;
+  }
+}
+
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 1fr;
@@ -555,5 +672,25 @@ label.wide {
 
   .auth-panel {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-logo {
+    font-size: 36px;
+  }
+
+  .landing-main {
+    padding: 40px 30px;
+  }
+
+  .landing-title {
+    font-size: 24px;
+    margin-bottom: 40px;
+  }
+
+  .landing-button {
+    padding: 20px 40px;
+    font-size: 20px;
   }
 }
